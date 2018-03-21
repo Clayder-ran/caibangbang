@@ -21,9 +21,8 @@ export class ListPage extends Component {
             menu: paramIn.menu,  // 菜名
             pn: paramIn.pn,  // 起始下标
             rn: 8,  // 每次条数
+            showLoading: true,  // 
         }
-        
-        // this.loadList( this.props.navigation.state.params );
     }
 
     render(){
@@ -31,27 +30,30 @@ export class ListPage extends Component {
 
         return (
             <View>
-                <Header centerText={'菜单列表'} navigation={this.props.navigation} />
-                {/* 列表 */}
-                <FlatList 
-                    data={this.state.list} 
-                    renderItem={this.itemHTML} 
-                    keyExtractor={(item, index)=> String(index)} 
-                    ItemSeparatorComponent={()=>(<View style={{height:10,backgroundColor:'white'}}></View>)} 
-                    ListHeaderComponent={()=>(<View style={{height: 10, backgroundColor: 'white'}}></View>)} 
-                    ListFooterComponent={()=>(<View style={{height: 10, backgroundColor: 'white'}}></View>)} 
-                    ListEmptyComponent={()=>(<Text style={{fontSize: 16}}> Sorry, 没有内容! </Text>)} 
-                    onEndReachedThreshold={0.1} /**距离多远的时候再次加载 */
-                    onEndReached={this.getMoreItem} 
-                    refreshing={false}  
-                    onRefresh={()=>{
-                        console.log("loadMore");
-                        
-                    }}
-                />
+                <View>
+                    <Header centerText={'菜单列表'} navigation={this.props.navigation} />
+                    {/* 列表 */}
+                    <FlatList 
+                        data={this.state.list} 
+                        renderItem={this.itemHTML} 
+                        keyExtractor={(item, index)=> String(index)} 
+                        ItemSeparatorComponent={()=>(<View style={{height:10,backgroundColor:'white'}}></View>)} 
+                        ListHeaderComponent={()=>(<View style={{height: 10, backgroundColor: 'white'}}></View>)} 
+                        ListFooterComponent={()=>(<View style={{height: 10, backgroundColor: 'white'}}></View>)} 
+                        ListEmptyComponent={()=>(<Text style={{flex: 1, textAlignVertical: 'center', textAlign: 'center',fontSize: 16, height: 560}}>  </Text>)} 
+                        onEndReachedThreshold={0.1} /**距离多远的时候再次加载 */
+                        onEndReached={this.getMoreItem} 
+                        refreshing={false}  
+                        onRefresh={()=>{
+                            console.log("清空并再次加载");
+                        }}
+                    />
+                </View>
 
-                <LoadingModal isShow />
+                {/* loading 弹窗 */}
+                {this.state.showLoading? <MyModal style={{position: 'absolute', zIndex: 1000}} /> : <Text></Text>}
             </View>
+            
         )
     }
 
@@ -84,14 +86,13 @@ export class ListPage extends Component {
         //     if(err){
         //         console.log("无内容, 开始 ajax");
                 
-                http(params).then((result) => {
+                true && http(params).then((result) => {
 
                     this.setState((prev)=>({
-                        list: prev.list.concat(result.data)
+                        list: prev.list.concat(result.data),
+                        showLoading: false,
                     }))
-                    console.log(result);
                     
-
                     // console.log(this.state.list);
                     
 
@@ -109,8 +110,13 @@ export class ListPage extends Component {
             // }
             
         // })
+    }
 
-        
+    // 设置模态框状态
+    setModalState(isShow){
+        this.setState({
+            showLoading: isShow,
+        });
     }
 
 }
@@ -127,4 +133,38 @@ const styles = StyleSheet.create({
         flex: 1,
     }
 });
+
+// 加载中 modal
+class MyModal extends Component {
+    constructor(props){
+        super(props);
+
+
+    }
+
+    render(){
+        return (
+            <View style={modalStyles.box}>
+                <Text style={modalStyles.text}>加载中...</Text>
+            </View>
+        )
+    }
+}
+// modal 样式
+const modalStyles = StyleSheet.create({
+    box: {
+        position: 'absolute',
+        width: 360,
+        height: 620,
+        zIndex: 100,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        color: 'white',
+        fontSize: 16,
+    }
+})
 

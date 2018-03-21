@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         height: 56,
-        elevation: 4,
+        // elevation: 0,
         borderWidth: 0,
     },
     headerBothSide: {
