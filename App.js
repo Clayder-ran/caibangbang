@@ -36,7 +36,6 @@ export default class App extends Component<Props> {
     }
 
     render() {
-
         return (
             <View style={styles.box}>
                 {/* 搜索条 */}
@@ -46,10 +45,12 @@ export default class App extends Component<Props> {
 
                 {/* 搜索框 */}
                 <TouchableNativeFeedback style={styles.searchButton}  onPress={() => {
-                    let menu = this.state.menu && this.state.menu.replace(/\s/g, '');
+                    let menu = this.state.menu && this.state.menu.replace(/\s+/g, '');
                     if( menu ){
                         this.props.navigation.navigate("ListPage", {
-                            menu: menu
+                            menu: menu,
+                            pn: 0,
+                            rn: 10,
                         });
                     }else{
                         alert("请填写内容");
