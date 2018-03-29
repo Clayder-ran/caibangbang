@@ -207,3 +207,6 @@ const burdenStyles = StyleSheet.create({
         color: 'black',
     }
 })
+
+
+const newData="这是新数据";
